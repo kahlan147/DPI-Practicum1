@@ -36,7 +36,6 @@ public class LoanBrokerFrame extends JFrame {
 	private JList<JListLine> list;
 
 	private HashMap<String, RequestReply> RequestReplyHashmap; //Bind the messageID of the message to a RequestReply
-	private HashMap<String, String> IDHashmap; //Bind the messageID obtained from client to the messageID used for the message sent to the bank
 	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -63,9 +62,8 @@ public class LoanBrokerFrame extends JFrame {
 						BankInterestRequest bankInterestRequest = new BankInterestRequest(loanRequest.getAmount(),loanRequest.getTime());
 						RequestReply newRequestReply = new RequestReply(bankInterestRequest, null);
 						add(loanRequest); //Show the data on the frame
-						String ID = ConnectionData.SendMessage(ConnectionData.BROKERTOBANK, newRequestReply, null); //Send the data to the bank and return the uID belonging to this message.
-						RequestReplyHashmap.put(ID, requestReply); //Put the ID of the request and the RequestReply belonging to it in map, allowing for easier find.
-						IDHashmap.put(ID, msg.getJMSMessageID()); //Put both IDs in a hashmap, allows for easier finding the client to reply this request to.
+						ConnectionData.SendMessage(ConnectionData.BROKERTOBANK, newRequestReply, msg.getJMSMessageID()); //Send the data to the bank and return the uID belonging to this message.
+						RequestReplyHashmap.put(msg.getJMSMessageID(), requestReply); //Put the ID of the request and the RequestReply belonging to it in map, allowing for easier find.
 					}
 					catch(JMSException e){
 						e.printStackTrace();
@@ -87,8 +85,7 @@ public class LoanBrokerFrame extends JFrame {
 						LoanReply loanReply = new LoanReply(bankInterestReply.getInterest(), bankInterestReply.getQuoteId());
 						rr.setReply(loanReply);
 						add(((LoanRequest)rr.getRequest()), bankInterestReply);
-						String ClientID = IDHashmap.get(ID);
-						ConnectionData.SendMessage(ConnectionData.BROKERTOCLIENT, rr, ClientID);
+						ConnectionData.SendMessage(ConnectionData.BROKERTOCLIENT, rr, ID);
 					}
 					catch(JMSException e){
 						e.printStackTrace();
@@ -127,7 +124,6 @@ public class LoanBrokerFrame extends JFrame {
 		list = new JList<JListLine>(listModel);
 		scrollPane.setViewportView(list);
 		RequestReplyHashmap = new HashMap<>();
-		IDHashmap = new HashMap<>();
 	}
 	
 	 private JListLine getRequestReply(LoanRequest request){    
@@ -138,14 +134,12 @@ public class LoanBrokerFrame extends JFrame {
 	    		 return rr;
 	    	 }
 	     }
-	     
 	     return null;
 	   }
 	
 	public void add(LoanRequest loanRequest){		
 		listModel.addElement(new JListLine(loanRequest));		
 	}
-	
 
 	public void add(LoanRequest loanRequest,BankInterestRequest bankRequest){
 		JListLine rr = getRequestReply(loanRequest);

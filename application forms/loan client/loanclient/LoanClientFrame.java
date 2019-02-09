@@ -193,7 +193,6 @@ public class LoanClientFrame extends JFrame {
 				public void onMessage(Message msg) {
 					try {
 						RequestReply requestReply = (RequestReply)((ObjectMessage) msg).getObject(); //Cast the messageobject to an ObjectMessage, then take the object and cast this back to it's class.
-						LoanRequest loanRequest = (LoanRequest)requestReply.getRequest();
 						LoanReply loanReply = (LoanReply) requestReply.getReply();
 						RequestReply rr = RequestReplyMap.get(msg.getJMSCorrelationID());
 						RequestReply az = getRequestReply((LoanRequest)rr.getRequest());

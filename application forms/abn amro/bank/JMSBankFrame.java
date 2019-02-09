@@ -22,7 +22,6 @@ import javax.swing.border.EmptyBorder;
 import model.ConnectionData;
 import model.bank.*;
 import messaging.requestreply.RequestReply;
-import model.loan.LoanRequest;
 
 public class JMSBankFrame extends JFrame {
 
@@ -60,7 +59,7 @@ public class JMSBankFrame extends JFrame {
                     try {
                         RequestReply requestReply = (RequestReply)((ObjectMessage) msg).getObject(); //Cast the messageobject to an ObjectMessage, then take the object and cast this back to it's class
                         listModel.addElement(requestReply);
-                        IDHashmap.put(requestReply, msg.getJMSMessageID());
+                        IDHashmap.put(requestReply, msg.getJMSCorrelationID());
                     }
                     catch(JMSException e){
                         e.printStackTrace();
