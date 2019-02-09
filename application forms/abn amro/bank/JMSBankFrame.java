@@ -58,8 +58,8 @@ public class JMSBankFrame extends JFrame {
                 public void onMessage(Message msg) {
                     try {
                         RequestReply requestReply = (RequestReply)((ObjectMessage) msg).getObject(); //Cast the messageobject to an ObjectMessage, then take the object and cast this back to it's class
-                        listModel.addElement(requestReply);
-                        IDHashmap.put(requestReply, msg.getJMSCorrelationID());
+                        listModel.addElement(requestReply); //Show the requestreply in the frame.
+                        IDHashmap.put(requestReply, msg.getJMSCorrelationID()); //Save the ID belonging to a requestreply,
                     }
                     catch(JMSException e){
                         e.printStackTrace();
@@ -125,7 +125,7 @@ public class JMSBankFrame extends JFrame {
 				if (rr!= null && reply != null){
 					rr.setReply(reply);
 	                list.repaint();
-	                String ID = IDHashmap.get(rr);
+	                String ID = IDHashmap.get(rr); //Regain the ID of the client by the requestreply.
 	                ConnectionData.SendMessage(ConnectionData.BANKTOBROKER, rr, ID);
 				}
 			}

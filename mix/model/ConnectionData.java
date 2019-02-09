@@ -42,7 +42,14 @@ public class ConnectionData {
         }
     }
 
-
+    /**
+     * Implemented by Niels Verheijen
+     * Sends messages through the given channel, adding requestreplies and an ID to them.
+     * @param channel String belonging to a channel.
+     * @param requestReply Object to send to the receiver.
+     * @param ID An Id to be added to the message. Allowed to be null.
+     * @return returns the messageID of the sent message.
+     */
     public static String SendMessage(String channel, RequestReply requestReply, String ID){
         Session session;
         Destination sendDestination;
@@ -52,15 +59,14 @@ public class ConnectionData {
             ConnectionData connectionData = new ConnectionData(channel);
             session = connectionData.session;
             sendDestination = connectionData.destination;
-            producer = session.createProducer(sendDestination);
+            producer = session.createProducer(sendDestination); //Create a producer
 
-            Message msg = session.createObjectMessage(requestReply);
+            Message msg = session.createObjectMessage(requestReply); //Adds the requestreply to the message
             if(ID != null){
-                    msg.setJMSCorrelationID(ID);
+                    msg.setJMSCorrelationID(ID); //If an ID has been given, add it as the correlationID
             }
-            // send the message
-            producer.send(msg);
-            return msg.getJMSMessageID();
+            producer.send(msg); //Sends the message
+            return msg.getJMSMessageID(); //Return the ID of the messageID
         }
         catch(JMSException e){
             e.printStackTrace();
@@ -68,6 +74,11 @@ public class ConnectionData {
         return "";
     }
 
+    /**
+     * Sets up a connection, awaiting for messages.
+     * @param channel String belonging to a channel.
+     * @param messageListener MessageListener object indicating what needs to happen after a message is received.
+     */
     public static void PrepareToReceiveMessages(String channel, MessageListener messageListener){
         Connection connection;
         Session session;
@@ -78,9 +89,9 @@ public class ConnectionData {
             connection = connectionData.connection;
             session = connectionData.session;
             receiveDestination = connectionData.destination;
-            consumer = session.createConsumer(receiveDestination);
+            consumer = session.createConsumer(receiveDestination); //Create a consumer
             connection.start(); // this is needed to start receiving messages
-            consumer.setMessageListener(messageListener);
+            consumer.setMessageListener(messageListener); //Sets the messagelistener event.
         }
         catch (JMSException e) {
             e.printStackTrace();

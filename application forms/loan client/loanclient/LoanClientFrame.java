@@ -152,8 +152,8 @@ public class LoanClientFrame extends JFrame {
 	}
 
 	private void CreateAndSendRequest(RequestReply requestReply){
-		String ID = ConnectionData.SendMessage(ConnectionData.CLIENTTOBROKER, requestReply, null);
-		RequestReplyMap.put(ID,requestReply);
+		String ID = ConnectionData.SendMessage(ConnectionData.CLIENTTOBROKER, requestReply, null); //Send the message to the broker and regain an ID belonging to the message.
+		RequestReplyMap.put(ID,requestReply); //Put the requestreply in the map, findable with an ID
 	}
 	
 	/**
@@ -194,17 +194,17 @@ public class LoanClientFrame extends JFrame {
 					try {
 						RequestReply requestReply = (RequestReply)((ObjectMessage) msg).getObject(); //Cast the messageobject to an ObjectMessage, then take the object and cast this back to it's class.
 						LoanReply loanReply = (LoanReply) requestReply.getReply();
-						RequestReply rr = RequestReplyMap.get(msg.getJMSCorrelationID());
-						RequestReply az = getRequestReply((LoanRequest)rr.getRequest());
+						RequestReply rr = RequestReplyMap.get(msg.getJMSCorrelationID()); //Obtain the requestreply from the map belonging to the ID
+						RequestReply az = getRequestReply((LoanRequest)rr.getRequest()); //Obtain the requestreply in the listmodel
 						int i = 0;
-						for (i = 0; i < listModel.getSize(); i++){
+						for (i = 0; i < listModel.getSize(); i++){	//Loop through the list, obtain the ID of the requestreply in the list.
 							RequestReply<LoanRequest,LoanReply> er =listModel.get(i);
 							if (er == az){
 								break;
 							}
 						}
-						az.setReply(loanReply);
-						listModel.set(i,az);
+						az.setReply(loanReply); //Add the reply to the requestreply.
+						listModel.set(i,az); //Exchange the requestreply in the list with the new requestreply
 					}
 					catch(NullPointerException | JMSException e){
 						e.printStackTrace();

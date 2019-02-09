@@ -52,6 +52,10 @@ public class LoanBrokerFrame extends JFrame {
 		});
 	}
 
+	/**
+	 * Implemented by Niels Verheijen.
+	 * Handles messages received from clients, redirecting them to the bank.
+	 */
 	private void PrepareToReceiveMessagesFromClient(){
 		ConnectionData.PrepareToReceiveMessages(ConnectionData.CLIENTTOBROKER, new MessageListener() {
 				@Override
@@ -59,7 +63,7 @@ public class LoanBrokerFrame extends JFrame {
 					try {
 						RequestReply requestReply = (RequestReply)((ObjectMessage)msg).getObject();
 						LoanRequest loanRequest = (LoanRequest)requestReply.getRequest();
-						BankInterestRequest bankInterestRequest = new BankInterestRequest(loanRequest.getAmount(),loanRequest.getTime());
+						BankInterestRequest bankInterestRequest = new BankInterestRequest(loanRequest.getAmount(),loanRequest.getTime()); //Convert loanrequest to bankrequest
 						RequestReply newRequestReply = new RequestReply(bankInterestRequest, null);
 						add(loanRequest); //Show the data on the frame
 						ConnectionData.SendMessage(ConnectionData.BROKERTOBANK, newRequestReply, msg.getJMSMessageID()); //Send the data to the bank and return the uID belonging to this message.
@@ -73,6 +77,10 @@ public class LoanBrokerFrame extends JFrame {
 
 	}
 
+	/**
+	 * Implemented by Niels Verheijen.
+	 * Handles messages received from a bank, redirecting them to the client.
+	 */
 	private void PrepareToReceiveMessagesFromBank(){
 		ConnectionData.PrepareToReceiveMessages(ConnectionData.BANKTOBROKER, new MessageListener() {
 				@Override
@@ -80,12 +88,12 @@ public class LoanBrokerFrame extends JFrame {
 					try {
 						RequestReply requestReply = (RequestReply)((ObjectMessage)msg).getObject();
 						BankInterestReply bankInterestReply = (BankInterestReply) requestReply.getReply();
-						String ID = msg.getJMSCorrelationID();
-						RequestReply rr = RequestReplyHashmap.get(ID);
+						String ID = msg.getJMSCorrelationID(); //Take the ID belonging to the client from the message
+						RequestReply rr = RequestReplyHashmap.get(ID); //Acquire the RequestReply object belonging to the client's ID
 						LoanReply loanReply = new LoanReply(bankInterestReply.getInterest(), bankInterestReply.getQuoteId());
-						rr.setReply(loanReply);
-						add(((LoanRequest)rr.getRequest()), bankInterestReply);
-						ConnectionData.SendMessage(ConnectionData.BROKERTOCLIENT, rr, ID);
+						rr.setReply(loanReply); //Add the reply to the RequestReply
+						add(((LoanRequest)rr.getRequest()), bankInterestReply); //Show the requestreply data on the frame
+						ConnectionData.SendMessage(ConnectionData.BROKERTOCLIENT, rr, ID); //Send message back to the client
 					}
 					catch(JMSException e){
 						e.printStackTrace();
