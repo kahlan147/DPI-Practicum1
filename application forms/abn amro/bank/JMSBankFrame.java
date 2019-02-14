@@ -9,7 +9,6 @@ import java.util.EventListener;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.jms.*;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;

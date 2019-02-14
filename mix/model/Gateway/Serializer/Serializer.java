@@ -1,6 +1,5 @@
 package model.Gateway.Serializer;
 
-import java.io.Serializable;
 
 /**
  * Created by Niels Verheijen on 13/02/2019.

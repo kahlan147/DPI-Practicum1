@@ -1,6 +1,5 @@
 package model.Gateway;
 
-import model.ConnectionData;
 import org.apache.activemq.ActiveMQConnectionFactory;
 
 import javax.jms.*;

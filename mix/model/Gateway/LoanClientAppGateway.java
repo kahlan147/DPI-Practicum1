@@ -42,7 +42,7 @@ public class LoanClientAppGateway extends AppGateway{
         this.listener = listener;
     }
 
-    public void onLoanRequestArrived(LoanRequest request, String Id){
+    private void onLoanRequestArrived(LoanRequest request, String Id){
         loanRequestHashMap.put(Id, request);
         RequestReply requestReply = new RequestReply(request, null);
         listener.newDataReceived(requestReply, Id);

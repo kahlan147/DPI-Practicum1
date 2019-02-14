@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
-import javax.jms.*;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -50,8 +49,6 @@ public class LoanClientFrame extends JFrame implements NewDataListener {
 	private JTextField tfTime;
 
 	private LoanBrokerAppGateway loanBrokerAppGateway;
-
-	private HashMap<String, LoanRequest> loanRequestHashMap;
 
 	/**
 	 * Create the frame.
@@ -151,9 +148,7 @@ public class LoanClientFrame extends JFrame implements NewDataListener {
 		contentPane.add(scrollPane, gbc_scrollPane);
 		
 		requestReplyList = new JList<RequestReply<LoanRequest,LoanReply>>(listModel);
-		scrollPane.setViewportView(requestReplyList);	
-
-		loanRequestHashMap = new HashMap<>();
+		scrollPane.setViewportView(requestReplyList);
 
 		loanBrokerAppGateway = new LoanBrokerAppGateway(new LoanSerializer(), ConnectionData.CLIENTTOBROKER, ConnectionData.BROKERTOCLIENT);
 		loanBrokerAppGateway.subscribeToEvent(this);

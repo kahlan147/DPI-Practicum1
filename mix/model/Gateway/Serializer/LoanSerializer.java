@@ -22,7 +22,7 @@ public class LoanSerializer implements Serializer {
     }
 
     @Override
-    public Object requestFromString(String str) {
+    public LoanRequest requestFromString(String str) {
         return genson.deserialize(str, LoanRequest.class);
     }
 
@@ -32,7 +32,7 @@ public class LoanSerializer implements Serializer {
     }
 
     @Override
-    public Object replyFromString(String str) {
+    public LoanReply replyFromString(String str) {
         return genson.deserialize(str, LoanReply.class);
     }
 }

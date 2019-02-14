@@ -21,16 +21,16 @@ import java.util.HashMap;
 public class LoanBrokerAppGateway extends AppGateway {
 
     private NewDataListener listener;
-    private HashMap<String, Object> requestMap;
+    private HashMap<String, LoanRequest> requestMap;
 
     private void setupMessageListener() {
         MessageListener messageListener;
-        if(serializer instanceof LoanSerializer) {
+        if(this.serializer instanceof LoanSerializer) {
             messageListener = new MessageListener() {
                 @Override
                 public void onMessage(Message message) {
                     try {
-                        LoanRequest loanRequest = (LoanRequest)requestMap.get(message.getJMSCorrelationID());
+                        LoanRequest loanRequest = requestMap.get(message.getJMSCorrelationID());
                         String textMessage = ((TextMessage) message).getText();
                         LoanReply loanreply = (LoanReply) serializer.replyFromString(textMessage);
                         onLoanReplyArrived(loanRequest, loanreply, message.getJMSCorrelationID());
@@ -40,7 +40,7 @@ public class LoanBrokerAppGateway extends AppGateway {
                 }
             };
         }
-        else if(serializer instanceof BankSerializer){
+        else if(this.serializer instanceof BankSerializer){
             messageListener = new MessageListener() {
                 @Override
                 public void onMessage(Message message) {
@@ -66,18 +66,16 @@ public class LoanBrokerAppGateway extends AppGateway {
         setupMessageListener();
     }
 
-
-    public String applyForLoan(LoanRequest request){
+    public void applyForLoan(LoanRequest request){
         try {
-        String result = serializer.requestToString(request);
-        Message msg = sender.createTextMessage(result);
-        sender.send(msg);
+            String result = serializer.requestToString(request);
+            Message msg = sender.createTextMessage(result);
+            sender.send(msg);
             requestMap.put(msg.getJMSMessageID(), request);
         }
         catch (JMSException e) {
             e.printStackTrace();
         }
-        return "";
     }
 
     public void subscribeToEvent(NewDataListener listener){

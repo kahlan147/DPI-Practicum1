@@ -19,11 +19,9 @@ public class MessageReceiverGateway {
     private Destination destination;
     private MessageConsumer consumer = null;
 
-    private String channelName;
 
     public MessageReceiverGateway(String channelName){
         try {
-            this.channelName = channelName;
             Properties props = new Properties();
             props.setProperty(Context.INITIAL_CONTEXT_FACTORY, "org.apache.activemq.jndi.ActiveMQInitialContextFactory");
             props.setProperty(Context.PROVIDER_URL, "tcp://localhost:61616");

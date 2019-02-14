@@ -21,7 +21,7 @@ public class BankSerializer implements Serializer{
     }
 
     @Override
-    public Object requestFromString(String str) {
+    public BankInterestRequest requestFromString(String str) {
         return genson.deserialize(str, BankInterestRequest.class);
     }
 
@@ -31,7 +31,7 @@ public class BankSerializer implements Serializer{
     }
 
     @Override
-    public Object replyFromString(String str) {
+    public BankInterestReply replyFromString(String str) {
         return genson.deserialize(str, BankInterestReply.class);
     }
 }
