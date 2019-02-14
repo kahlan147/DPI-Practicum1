@@ -5,12 +5,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.util.HashMap;
-import java.util.Properties;
 
-import javax.jms.*;
-import javax.naming.Context;
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import javax.swing.DefaultListModel;
 import javax.swing.JFrame;
 import javax.swing.JList;
@@ -21,7 +16,7 @@ import javax.swing.border.EmptyBorder;
 import messaging.requestreply.RequestReply;
 import model.Gateway.BankAppGateway;
 import model.Gateway.LoanClientAppGateway;
-import model.Gateway.NewDataListenener;
+import model.Gateway.NewDataListener;
 import model.Gateway.Serializer.BankSerializer;
 import model.Gateway.Serializer.LoanSerializer;
 import model.bank.*;
@@ -30,7 +25,7 @@ import model.loan.LoanRequest;
 import model.ConnectionData;
 
 
-public class LoanBrokerFrame extends JFrame implements NewDataListenener {
+public class LoanBrokerFrame extends JFrame implements NewDataListener {
 
 	/**
 	 * 
@@ -40,7 +35,7 @@ public class LoanBrokerFrame extends JFrame implements NewDataListenener {
 	private DefaultListModel<JListLine> listModel = new DefaultListModel<JListLine>();
 	private JList<JListLine> list;
 
-	private HashMap<String, RequestReply> RequestReplyHashmap; //Bind the messageID of the message to a RequestReply
+	private HashMap<String, LoanRequest> loanRequestHashMap; //Bind the messageID of the message to a RequestReply
 
 	private BankAppGateway bankAppGateway;
 	private LoanClientAppGateway loanClientAppGateway;
@@ -58,9 +53,22 @@ public class LoanBrokerFrame extends JFrame implements NewDataListenener {
 		});
 	}
 
+	@Override
 	public void newDataReceived(RequestReply requestReply, String Id){
-		LoanRequest loanRequest = (LoanRequest)requestReply.getRequest();
-		add(loanRequest);
+		if(requestReply.getRequest() instanceof LoanRequest) {
+			LoanRequest loanRequest = (LoanRequest) requestReply.getRequest();
+			add(loanRequest);
+			loanRequestHashMap.put(Id, loanRequest);
+			BankInterestRequest bankInterestRequest = new BankInterestRequest(loanRequest.getAmount(), loanRequest.getTime());
+			bankAppGateway.sendBankRequest(bankInterestRequest, Id);
+		}
+		else if(requestReply.getReply() != null && requestReply.getReply() instanceof BankInterestReply){
+			BankInterestReply bankInterestReply = (BankInterestReply) requestReply.getReply();
+			LoanRequest loanRequest = loanRequestHashMap.get(Id);
+			add(loanRequest,bankInterestReply);
+			LoanReply loanReply = new LoanReply(bankInterestReply.getInterest(), bankInterestReply.getQuoteId());
+			loanClientAppGateway.sendLoanReply(loanReply, Id);
+		}
 	}
 
 	/**
@@ -93,8 +101,9 @@ public class LoanBrokerFrame extends JFrame implements NewDataListenener {
 		scrollPane.setViewportView(list);
 		loanClientAppGateway = new LoanClientAppGateway(new LoanSerializer(), ConnectionData.BROKERTOCLIENT, ConnectionData.CLIENTTOBROKER);
 		bankAppGateway = new BankAppGateway(new BankSerializer(), ConnectionData.BROKERTOBANK, ConnectionData.BANKTOBROKER);
-		RequestReplyHashmap = new HashMap<>();
+		loanRequestHashMap = new HashMap<>();
 		loanClientAppGateway.subscribeToEvent(this);
+		bankAppGateway.subscribeToEvent(this);
 	}
 	
 	 private JListLine getRequestReply(LoanRequest request){    

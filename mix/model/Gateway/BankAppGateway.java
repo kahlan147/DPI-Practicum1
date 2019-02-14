@@ -1,5 +1,6 @@
 package model.Gateway;
 
+import messaging.requestreply.RequestReply;
 import model.Gateway.Serializer.BankSerializer;
 import model.Gateway.Serializer.Serializer;
 import model.bank.BankInterestReply;
@@ -16,6 +17,7 @@ import java.util.HashMap;
  */
 public class BankAppGateway extends AppGateway{
 
+    private NewDataListener listener;
     private HashMap<String, BankInterestRequest> bankInterestRequestHashMap;
 
     public BankAppGateway(Serializer serializer, String senderString, String receiverString){
@@ -28,7 +30,7 @@ public class BankAppGateway extends AppGateway{
                     BankInterestRequest bankInterestRequest = bankInterestRequestHashMap.get(message.getJMSCorrelationID());
                     String textMessage = ((TextMessage) message).getText();
                     BankInterestReply bankInterestReply = (BankInterestReply) serializer.replyFromString(textMessage);
-                    onBankReplyArrived(bankInterestReply, bankInterestRequest);
+                    onBankReplyArrived(bankInterestReply, bankInterestRequest, message.getJMSCorrelationID());
                 }
                 catch (JMSException e) {
                     e.printStackTrace();
@@ -37,8 +39,13 @@ public class BankAppGateway extends AppGateway{
         });
     }
 
-    public void onBankReplyArrived(BankInterestReply reply, BankInterestRequest request){
+    public void onBankReplyArrived(BankInterestReply reply, BankInterestRequest request, String Id){
+        RequestReply requestReply = new RequestReply(request, reply);
+        listener.newDataReceived(requestReply, Id);
+    }
 
+    public void subscribeToEvent(NewDataListener listener){
+        this.listener = listener;
     }
 
     public void sendBankRequest(BankInterestRequest request, String Id){

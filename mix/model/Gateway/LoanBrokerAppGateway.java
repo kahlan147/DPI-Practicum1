@@ -1,7 +1,6 @@
 package model.Gateway;
 
 import messaging.requestreply.RequestReply;
-import model.ConnectionData;
 import model.Gateway.Serializer.BankSerializer;
 import model.Gateway.Serializer.LoanSerializer;
 import model.Gateway.Serializer.Serializer;
@@ -21,6 +20,7 @@ import java.util.HashMap;
  */
 public class LoanBrokerAppGateway extends AppGateway {
 
+    private NewDataListener listener;
     private HashMap<String, Object> requestMap;
 
     private void setupMessageListener() {
@@ -33,7 +33,7 @@ public class LoanBrokerAppGateway extends AppGateway {
                         LoanRequest loanRequest = (LoanRequest)requestMap.get(message.getJMSCorrelationID());
                         String textMessage = ((TextMessage) message).getText();
                         LoanReply loanreply = (LoanReply) serializer.replyFromString(textMessage);
-                        onLoanReplyArrived(loanRequest, loanreply);
+                        onLoanReplyArrived(loanRequest, loanreply, message.getJMSCorrelationID());
                     } catch (JMSException e) {
                         e.printStackTrace();
                     }
@@ -47,7 +47,7 @@ public class LoanBrokerAppGateway extends AppGateway {
                     try {
                         String textMessage = ((TextMessage) message).getText();
                         BankInterestRequest bankInterestRequest = (BankInterestRequest)serializer.requestFromString(textMessage);
-                        onBankRequestArrived(bankInterestRequest);
+                        onBankRequestArrived(bankInterestRequest, message.getJMSCorrelationID());
                     } catch (JMSException e) {
                         e.printStackTrace();
                     }
@@ -67,7 +67,7 @@ public class LoanBrokerAppGateway extends AppGateway {
     }
 
 
-    public void applyForLoan(LoanRequest request){
+    public String applyForLoan(LoanRequest request){
         try {
         String result = serializer.requestToString(request);
         Message msg = sender.createTextMessage(result);
@@ -77,14 +77,21 @@ public class LoanBrokerAppGateway extends AppGateway {
         catch (JMSException e) {
             e.printStackTrace();
         }
+        return "";
     }
 
-    public void onLoanReplyArrived(LoanRequest request, LoanReply reply){
-
+    public void subscribeToEvent(NewDataListener listener){
+        this.listener = listener;
     }
 
-    public void onBankRequestArrived(BankInterestRequest bankInterestRequest){
+    public void onLoanReplyArrived(LoanRequest request, LoanReply reply, String Id){
+        RequestReply requestReply = new RequestReply(request, reply);
+        listener.newDataReceived(requestReply, Id);
+    }
 
+    public void onBankRequestArrived(BankInterestRequest bankInterestRequest, String Id){
+        RequestReply requestReply = new RequestReply(bankInterestRequest, null);
+        listener.newDataReceived(requestReply, Id);
     }
 
     public void replyToRequest(BankInterestReply bankInterestReply, String Id){
@@ -96,6 +103,6 @@ public class LoanBrokerAppGateway extends AppGateway {
         }
         catch (JMSException e) {
         e.printStackTrace();
-    }
+        }
     }
 }

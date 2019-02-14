@@ -22,11 +22,12 @@ import javax.swing.border.EmptyBorder;
 
 import model.ConnectionData;
 import model.Gateway.LoanBrokerAppGateway;
+import model.Gateway.NewDataListener;
 import model.Gateway.Serializer.BankSerializer;
 import model.bank.*;
 import messaging.requestreply.RequestReply;
 
-public class JMSBankFrame extends JFrame {
+public class JMSBankFrame extends JFrame implements NewDataListener {
 
 	/**
 	 * 
@@ -56,13 +57,13 @@ public class JMSBankFrame extends JFrame {
 		});
 	}
 
-
 	/**
 	 * Create the frame.
 	 */
 	public JMSBankFrame() {
 
 		loanBrokerAppGateway = new LoanBrokerAppGateway(new BankSerializer(), ConnectionData.BANKTOBROKER, ConnectionData.BROKERTOBANK);
+		loanBrokerAppGateway.subscribeToEvent(this);
 
 		setTitle("JMS Bank - ABN AMRO");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -118,7 +119,6 @@ public class JMSBankFrame extends JFrame {
 	                list.repaint();
 	                String Id = IDHashmap.get(rr); //Regain the ID of the client by the requestreply.
 					loanBrokerAppGateway.replyToRequest(reply, Id);
-	                //ConnectionData.SendMessage(ConnectionData.BANKTOBROKER, rr, ID);
 				}
 			}
 		});
@@ -131,4 +131,9 @@ public class JMSBankFrame extends JFrame {
 		IDHashmap = new HashMap<>();
 	}
 
+	@Override
+	public void newDataReceived(RequestReply requestReply, String Id) {
+		listModel.addElement(requestReply);
+		IDHashmap.put(requestReply, Id);
+	}
 }

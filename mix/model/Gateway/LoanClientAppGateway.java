@@ -2,8 +2,6 @@ package model.Gateway;
 
 import messaging.requestreply.RequestReply;
 import model.Gateway.Serializer.Serializer;
-import model.bank.BankInterestReply;
-import model.bank.BankInterestRequest;
 import model.loan.LoanReply;
 import model.loan.LoanRequest;
 
@@ -11,8 +9,6 @@ import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
-import javax.swing.*;
-import java.util.EventListener;
 import java.util.HashMap;
 
 /**
@@ -20,7 +16,7 @@ import java.util.HashMap;
  */
 public class LoanClientAppGateway extends AppGateway{
 
-    private NewDataListenener listener;
+    private NewDataListener listener;
     private HashMap<String, LoanRequest> loanRequestHashMap;
 
     public LoanClientAppGateway(Serializer serializer, String senderString, String receiverString){
@@ -42,7 +38,7 @@ public class LoanClientAppGateway extends AppGateway{
         });
     }
 
-    public void subscribeToEvent(NewDataListenener listener){
+    public void subscribeToEvent(NewDataListener listener){
         this.listener = listener;
     }
 
