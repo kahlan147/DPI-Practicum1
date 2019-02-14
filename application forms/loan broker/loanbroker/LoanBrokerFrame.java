@@ -19,13 +19,18 @@ import javax.swing.JScrollPane;
 import javax.swing.border.EmptyBorder;
 
 import messaging.requestreply.RequestReply;
+import model.Gateway.BankAppGateway;
+import model.Gateway.LoanClientAppGateway;
+import model.Gateway.NewDataListenener;
+import model.Gateway.Serializer.BankSerializer;
+import model.Gateway.Serializer.LoanSerializer;
 import model.bank.*;
 import model.loan.LoanReply;
 import model.loan.LoanRequest;
 import model.ConnectionData;
 
 
-public class LoanBrokerFrame extends JFrame {
+public class LoanBrokerFrame extends JFrame implements NewDataListenener {
 
 	/**
 	 * 
@@ -36,6 +41,9 @@ public class LoanBrokerFrame extends JFrame {
 	private JList<JListLine> list;
 
 	private HashMap<String, RequestReply> RequestReplyHashmap; //Bind the messageID of the message to a RequestReply
+
+	private BankAppGateway bankAppGateway;
+	private LoanClientAppGateway loanClientAppGateway;
 	
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
@@ -43,8 +51,6 @@ public class LoanBrokerFrame extends JFrame {
 				try {
 					LoanBrokerFrame frame = new LoanBrokerFrame();
 					frame.setVisible(true);
-					frame.PrepareToReceiveMessagesFromClient();
-					frame.PrepareToReceiveMessagesFromBank();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -52,56 +58,10 @@ public class LoanBrokerFrame extends JFrame {
 		});
 	}
 
-	/**
-	 * Implemented by Niels Verheijen.
-	 * Handles messages received from clients, redirecting them to the bank.
-	 */
-	private void PrepareToReceiveMessagesFromClient(){
-		ConnectionData.PrepareToReceiveMessages(ConnectionData.CLIENTTOBROKER, new MessageListener() {
-				@Override
-				public void onMessage(Message msg) {
-					try {
-						RequestReply requestReply = (RequestReply)((ObjectMessage)msg).getObject();
-						LoanRequest loanRequest = (LoanRequest)requestReply.getRequest();
-						BankInterestRequest bankInterestRequest = new BankInterestRequest(loanRequest.getAmount(),loanRequest.getTime()); //Convert loanrequest to bankrequest
-						RequestReply newRequestReply = new RequestReply(bankInterestRequest, null);
-						add(loanRequest); //Show the data on the frame
-						ConnectionData.SendMessage(ConnectionData.BROKERTOBANK, newRequestReply, msg.getJMSMessageID()); //Send the data to the bank and return the uID belonging to this message.
-						RequestReplyHashmap.put(msg.getJMSMessageID(), requestReply); //Put the ID of the request and the RequestReply belonging to it in map, allowing for easier find.
-					}
-					catch(JMSException e){
-						e.printStackTrace();
-					}
-				}
-			});
-
+	public void newDataReceived(RequestReply requestReply, String Id){
+		LoanRequest loanRequest = (LoanRequest)requestReply.getRequest();
+		add(loanRequest);
 	}
-
-	/**
-	 * Implemented by Niels Verheijen.
-	 * Handles messages received from a bank, redirecting them to the client.
-	 */
-	private void PrepareToReceiveMessagesFromBank(){
-		ConnectionData.PrepareToReceiveMessages(ConnectionData.BANKTOBROKER, new MessageListener() {
-				@Override
-				public void onMessage(Message msg) {
-					try {
-						RequestReply requestReply = (RequestReply)((ObjectMessage)msg).getObject();
-						BankInterestReply bankInterestReply = (BankInterestReply) requestReply.getReply();
-						String ID = msg.getJMSCorrelationID(); //Take the ID belonging to the client from the message
-						RequestReply rr = RequestReplyHashmap.get(ID); //Acquire the RequestReply object belonging to the client's ID
-						LoanReply loanReply = new LoanReply(bankInterestReply.getInterest(), bankInterestReply.getQuoteId());
-						rr.setReply(loanReply); //Add the reply to the RequestReply
-						add(((LoanRequest)rr.getRequest()), bankInterestReply); //Show the requestreply data on the frame
-						ConnectionData.SendMessage(ConnectionData.BROKERTOCLIENT, rr, ID); //Send message back to the client
-					}
-					catch(JMSException e){
-						e.printStackTrace();
-					}
-				}
-			});
-		}
-
 
 	/**
 	 * Create the frame.
@@ -131,7 +91,10 @@ public class LoanBrokerFrame extends JFrame {
 		
 		list = new JList<JListLine>(listModel);
 		scrollPane.setViewportView(list);
+		loanClientAppGateway = new LoanClientAppGateway(new LoanSerializer(), ConnectionData.BROKERTOCLIENT, ConnectionData.CLIENTTOBROKER);
+		bankAppGateway = new BankAppGateway(new BankSerializer(), ConnectionData.BROKERTOBANK, ConnectionData.BANKTOBROKER);
 		RequestReplyHashmap = new HashMap<>();
+		loanClientAppGateway.subscribeToEvent(this);
 	}
 	
 	 private JListLine getRequestReply(LoanRequest request){    

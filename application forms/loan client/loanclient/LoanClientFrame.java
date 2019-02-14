@@ -26,6 +26,8 @@ import javax.swing.border.EmptyBorder;
 
 import messaging.requestreply.RequestReply;
 import model.ConnectionData;
+import model.Gateway.LoanBrokerAppGateway;
+import model.Gateway.Serializer.LoanSerializer;
 import model.bank.BankInterestReply;
 import model.bank.BankInterestRequest;
 import model.loan.*;
@@ -45,6 +47,8 @@ public class LoanClientFrame extends JFrame {
 	private JLabel lblNewLabel;
 	private JLabel lblNewLabel_1;
 	private JTextField tfTime;
+
+	private LoanBrokerAppGateway loanBrokerAppGateway;
 
 	private HashMap<String, RequestReply> RequestReplyMap;
 
@@ -149,11 +153,12 @@ public class LoanClientFrame extends JFrame {
 		scrollPane.setViewportView(requestReplyList);	
 
 		RequestReplyMap = new HashMap<>();
+
+		loanBrokerAppGateway = new LoanBrokerAppGateway(new LoanSerializer(), ConnectionData.CLIENTTOBROKER, ConnectionData.BROKERTOCLIENT);
 	}
 
 	private void CreateAndSendRequest(RequestReply requestReply){
-		String ID = ConnectionData.SendMessage(ConnectionData.CLIENTTOBROKER, requestReply, null); //Send the message to the broker and regain an ID belonging to the message.
-		RequestReplyMap.put(ID,requestReply); //Put the requestreply in the map, findable with an ID
+		loanBrokerAppGateway.applyForLoan((LoanRequest)requestReply.getRequest());
 	}
 	
 	/**
@@ -188,7 +193,8 @@ public class LoanClientFrame extends JFrame {
 	}
 
 	private void PrepareToReceiveMessages(){
-   		ConnectionData.PrepareToReceiveMessages(ConnectionData.BROKERTOCLIENT, new MessageListener() {
+
+   		/*ConnectionData.PrepareToReceiveMessages(ConnectionData.BROKERTOCLIENT, new MessageListener() {
 				@Override
 				public void onMessage(Message msg) {
 					try {
@@ -210,6 +216,6 @@ public class LoanClientFrame extends JFrame {
 						e.printStackTrace();
 					}
 				}
-			});
+			});*/
 	}
 }
