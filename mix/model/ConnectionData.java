@@ -17,6 +17,7 @@ public class ConnectionData {
     public static final String BROKERTOCLIENT = "BrokerToClient";
     public static final String BANKTOBROKER = "BankToBroker";
 
+    /*
     public Connection connection; // to connect to the JMS
     public Session session; // session for creating consumers
     public Destination destination; //reference to a queue/topic destination
@@ -42,14 +43,14 @@ public class ConnectionData {
         }
     }
 
-    /**
-     * Implemented by Niels Verheijen
-     * Sends messages through the given channel, adding requestreplies and an ID to them.
-     * @param channel String belonging to a channel.
-     * @param requestReply Object to send to the receiver.
-     * @param ID An Id to be added to the message. Allowed to be null.
-     * @return returns the messageID of the sent message.
-     */
+
+     Implemented by Niels Verheijen
+      Sends messages through the given channel, adding requestreplies and an ID to them.
+      @param channel String belonging to a channel.
+      @param requestReply Object to send to the receiver.
+      @param ID An Id to be added to the message. Allowed to be null.
+      @return returns the messageID of the sent message.
+
     public static String SendMessage(String channel, RequestReply requestReply, String ID){
         Session session;
         Destination sendDestination;
@@ -74,11 +75,11 @@ public class ConnectionData {
         return "";
     }
 
-    /**
+    **
      * Sets up a connection, awaiting for messages.
      * @param channel String belonging to a channel.
      * @param messageListener MessageListener object indicating what needs to happen after a message is received.
-     */
+     *
     public static void PrepareToReceiveMessages(String channel, MessageListener messageListener){
         Connection connection;
         Session session;
@@ -96,6 +97,6 @@ public class ConnectionData {
         catch (JMSException e) {
             e.printStackTrace();
         }
-    }
+    }*/
 
 }

@@ -10,7 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Properties;
 
-import javax.jms.*;
 import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
@@ -26,11 +25,14 @@ import javax.swing.border.EmptyBorder;
 
 import messaging.requestreply.RequestReply;
 import model.ConnectionData;
+import model.Gateway.LoanBrokerAppGateway;
+import model.Gateway.NewDataListener;
+import model.Gateway.Serializer.LoanSerializer;
 import model.bank.BankInterestReply;
 import model.bank.BankInterestRequest;
 import model.loan.*;
 
-public class LoanClientFrame extends JFrame {
+public class LoanClientFrame extends JFrame implements NewDataListener {
 
 	/**
 	 * 
@@ -46,7 +48,7 @@ public class LoanClientFrame extends JFrame {
 	private JLabel lblNewLabel_1;
 	private JTextField tfTime;
 
-	private HashMap<String, RequestReply> RequestReplyMap;
+	private LoanBrokerAppGateway loanBrokerAppGateway;
 
 	/**
 	 * Create the frame.
@@ -127,7 +129,7 @@ public class LoanClientFrame extends JFrame {
 				LoanRequest request = new LoanRequest(ssn,amount,time);
 				RequestReply rr = new RequestReply<LoanRequest,LoanReply>(request, null);
 				listModel.addElement(rr);
-				CreateAndSendRequest(rr);
+				CreateAndSendRequest(request);
 			}
 		});
 		GridBagConstraints gbc_btnQueue = new GridBagConstraints();
@@ -146,14 +148,14 @@ public class LoanClientFrame extends JFrame {
 		contentPane.add(scrollPane, gbc_scrollPane);
 		
 		requestReplyList = new JList<RequestReply<LoanRequest,LoanReply>>(listModel);
-		scrollPane.setViewportView(requestReplyList);	
+		scrollPane.setViewportView(requestReplyList);
 
-		RequestReplyMap = new HashMap<>();
+		loanBrokerAppGateway = new LoanBrokerAppGateway(new LoanSerializer(), ConnectionData.CLIENTTOBROKER, ConnectionData.BROKERTOCLIENT);
+		loanBrokerAppGateway.subscribeToEvent(this);
 	}
 
-	private void CreateAndSendRequest(RequestReply requestReply){
-		String ID = ConnectionData.SendMessage(ConnectionData.CLIENTTOBROKER, requestReply, null); //Send the message to the broker and regain an ID belonging to the message.
-		RequestReplyMap.put(ID,requestReply); //Put the requestreply in the map, findable with an ID
+	private void CreateAndSendRequest(LoanRequest request){
+		loanBrokerAppGateway.applyForLoan(request);
 	}
 	
 	/**
@@ -179,7 +181,6 @@ public class LoanClientFrame extends JFrame {
 				try {
 					LoanClientFrame frame = new LoanClientFrame();
 					frame.setVisible(true);
-					frame.PrepareToReceiveMessages();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -187,29 +188,19 @@ public class LoanClientFrame extends JFrame {
 		});
 	}
 
-	private void PrepareToReceiveMessages(){
-   		ConnectionData.PrepareToReceiveMessages(ConnectionData.BROKERTOCLIENT, new MessageListener() {
-				@Override
-				public void onMessage(Message msg) {
-					try {
-						RequestReply requestReply = (RequestReply)((ObjectMessage) msg).getObject(); //Cast the messageobject to an ObjectMessage, then take the object and cast this back to it's class.
-						LoanReply loanReply = (LoanReply) requestReply.getReply();
-						RequestReply rr = RequestReplyMap.get(msg.getJMSCorrelationID()); //Obtain the requestreply from the map belonging to the ID
-						RequestReply az = getRequestReply((LoanRequest)rr.getRequest()); //Obtain the requestreply in the listmodel
-						int i = 0;
-						for (i = 0; i < listModel.getSize(); i++){	//Loop through the list, obtain the ID of the requestreply in the list.
-							RequestReply<LoanRequest,LoanReply> er =listModel.get(i);
-							if (er == az){
-								break;
-							}
-						}
-						az.setReply(loanReply); //Add the reply to the requestreply.
-						listModel.set(i,az); //Exchange the requestreply in the list with the new requestreply
-					}
-					catch(NullPointerException | JMSException e){
-						e.printStackTrace();
-					}
-				}
-			});
+	@Override
+	public void newDataReceived(RequestReply requestReply, String Id) {
+   		LoanRequest loanRequest = (LoanRequest) requestReply.getRequest();
+		LoanReply loanReply = (LoanReply) requestReply.getReply();
+		RequestReply az = getRequestReply(loanRequest);
+		int i = 0;
+		for (i = 0; i < listModel.getSize(); i++){	//Loop through the list, obtain the ID of the requestreply in the list.
+			RequestReply<LoanRequest,LoanReply> er = listModel.get(i);
+			if (er == az){
+				break;
+			}
+		}
+		az.setReply(loanReply);
+		listModel.set(i,az);
 	}
 }

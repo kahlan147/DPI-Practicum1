@@ -5,10 +5,10 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.EventListener;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.jms.*;
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -20,10 +20,13 @@ import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
 import model.ConnectionData;
+import model.Gateway.LoanBrokerAppGateway;
+import model.Gateway.NewDataListener;
+import model.Gateway.Serializer.BankSerializer;
 import model.bank.*;
 import messaging.requestreply.RequestReply;
 
-public class JMSBankFrame extends JFrame {
+public class JMSBankFrame extends JFrame implements NewDataListener {
 
 	/**
 	 * 
@@ -34,6 +37,8 @@ public class JMSBankFrame extends JFrame {
 	private DefaultListModel<RequestReply<BankInterestRequest, BankInterestReply>> listModel = new DefaultListModel<RequestReply<BankInterestRequest, BankInterestReply>>();
 
 	private HashMap<RequestReply, String> IDHashmap;
+
+	private LoanBrokerAppGateway loanBrokerAppGateway;
 	
 	/**
 	 * Launch the application.
@@ -44,7 +49,6 @@ public class JMSBankFrame extends JFrame {
 				try {
 					JMSBankFrame frame = new JMSBankFrame();
 					frame.setVisible(true);
-					frame.PrepareToReceiveMessages();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -52,27 +56,14 @@ public class JMSBankFrame extends JFrame {
 		});
 	}
 
-    private void PrepareToReceiveMessages(){
-		ConnectionData.PrepareToReceiveMessages(ConnectionData.BROKERTOBANK, new MessageListener() {
-                @Override
-                public void onMessage(Message msg) {
-                    try {
-                        RequestReply requestReply = (RequestReply)((ObjectMessage) msg).getObject(); //Cast the messageobject to an ObjectMessage, then take the object and cast this back to it's class
-                        listModel.addElement(requestReply); //Show the requestreply in the frame.
-                        IDHashmap.put(requestReply, msg.getJMSCorrelationID()); //Save the ID belonging to a requestreply,
-                    }
-                    catch(JMSException e){
-                        e.printStackTrace();
-                    }
-                }
-            });
-        }
-
-
 	/**
 	 * Create the frame.
 	 */
 	public JMSBankFrame() {
+
+		loanBrokerAppGateway = new LoanBrokerAppGateway(new BankSerializer(), ConnectionData.BANKTOBROKER, ConnectionData.BROKERTOBANK);
+		loanBrokerAppGateway.subscribeToEvent(this);
+
 		setTitle("JMS Bank - ABN AMRO");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
@@ -125,8 +116,8 @@ public class JMSBankFrame extends JFrame {
 				if (rr!= null && reply != null){
 					rr.setReply(reply);
 	                list.repaint();
-	                String ID = IDHashmap.get(rr); //Regain the ID of the client by the requestreply.
-	                ConnectionData.SendMessage(ConnectionData.BANKTOBROKER, rr, ID);
+	                String Id = IDHashmap.get(rr); //Regain the ID of the client by the requestreply.
+					loanBrokerAppGateway.replyToRequest(reply, Id);
 				}
 			}
 		});
@@ -139,4 +130,9 @@ public class JMSBankFrame extends JFrame {
 		IDHashmap = new HashMap<>();
 	}
 
+	@Override
+	public void newDataReceived(RequestReply requestReply, String Id) {
+		listModel.addElement(requestReply);
+		IDHashmap.put(requestReply, Id);
+	}
 }
