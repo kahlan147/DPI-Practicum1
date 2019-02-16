@@ -15,6 +15,7 @@ import javax.swing.border.EmptyBorder;
 
 import messaging.requestreply.RequestReply;
 import model.Gateway.BankAppGateway;
+import model.Gateway.BankGatewayManager;
 import model.Gateway.LoanClientAppGateway;
 import model.Gateway.NewDataListener;
 import model.Gateway.Serializer.BankSerializer;
@@ -37,7 +38,7 @@ public class LoanBrokerFrame extends JFrame implements NewDataListener {
 
 	private HashMap<String, LoanRequest> loanRequestHashMap; //Bind the messageID of the message to a RequestReply
 
-	private BankAppGateway bankAppGateway;
+	private BankGatewayManager bankGatewayManager;
 	private LoanClientAppGateway loanClientAppGateway;
 	
 	public static void main(String[] args) {
@@ -60,7 +61,7 @@ public class LoanBrokerFrame extends JFrame implements NewDataListener {
 			add(loanRequest);
 			loanRequestHashMap.put(Id, loanRequest);
 			BankInterestRequest bankInterestRequest = new BankInterestRequest(loanRequest.getAmount(), loanRequest.getTime());
-			bankAppGateway.sendBankRequest(bankInterestRequest, Id);
+			bankGatewayManager.sendMessage(bankInterestRequest, Id);
 		}
 		else if(requestReply.getReply() != null && requestReply.getReply() instanceof BankInterestReply){
 			BankInterestReply bankInterestReply = (BankInterestReply) requestReply.getReply();
@@ -100,10 +101,10 @@ public class LoanBrokerFrame extends JFrame implements NewDataListener {
 		list = new JList<JListLine>(listModel);
 		scrollPane.setViewportView(list);
 		loanClientAppGateway = new LoanClientAppGateway(new LoanSerializer(), ConnectionData.BROKERTOCLIENT, ConnectionData.CLIENTTOBROKER);
-		bankAppGateway = new BankAppGateway(new BankSerializer(), ConnectionData.BROKERTOBANK, ConnectionData.BANKTOBROKER);
 		loanRequestHashMap = new HashMap<>();
 		loanClientAppGateway.subscribeToEvent(this);
-		bankAppGateway.subscribeToEvent(this);
+		bankGatewayManager = new BankGatewayManager();
+		bankGatewayManager.subscribeToEvent(this);
 	}
 	
 	 private JListLine getRequestReply(LoanRequest request){    

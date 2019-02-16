@@ -17,11 +17,16 @@ import java.util.HashMap;
  */
 public class BankAppGateway extends AppGateway{
 
+    public int lowestInterest;
+    public int highestInterest;
+
     private NewDataListener listener;
     private HashMap<String, BankInterestRequest> bankInterestRequestHashMap;
 
-    public BankAppGateway(Serializer serializer, String senderString, String receiverString){
+    public BankAppGateway(Serializer serializer, String senderString, String receiverString, int lowestInterest, int highestInterest){
         super(serializer,senderString,receiverString);
+        this.lowestInterest = lowestInterest;
+        this.highestInterest = highestInterest;
         bankInterestRequestHashMap = new HashMap<>();
         receiver.setListener(new MessageListener() {
             @Override
@@ -46,6 +51,10 @@ public class BankAppGateway extends AppGateway{
 
     public void subscribeToEvent(NewDataListener listener){
         this.listener = listener;
+    }
+
+    public boolean isInterestedInRequest(int loan){
+        return(loan >= lowestInterest && loan <= highestInterest);
     }
 
     public void sendBankRequest(BankInterestRequest request, String Id){

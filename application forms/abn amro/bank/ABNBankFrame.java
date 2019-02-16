@@ -5,9 +5,7 @@ import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.EventListener;
 import java.util.HashMap;
-import java.util.List;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -26,7 +24,7 @@ import model.Gateway.Serializer.BankSerializer;
 import model.bank.*;
 import messaging.requestreply.RequestReply;
 
-public class JMSBankFrame extends JFrame implements NewDataListener {
+public class ABNBankFrame extends JFrame implements NewDataListener {
 
 	/**
 	 * 
@@ -47,7 +45,7 @@ public class JMSBankFrame extends JFrame implements NewDataListener {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					JMSBankFrame frame = new JMSBankFrame();
+					ABNBankFrame frame = new ABNBankFrame();
 					frame.setVisible(true);
 				} catch (Exception e) {
 					e.printStackTrace();
@@ -59,9 +57,9 @@ public class JMSBankFrame extends JFrame implements NewDataListener {
 	/**
 	 * Create the frame.
 	 */
-	public JMSBankFrame() {
+	public ABNBankFrame() {
 
-		loanBrokerAppGateway = new LoanBrokerAppGateway(new BankSerializer(), ConnectionData.BANKTOBROKER, ConnectionData.BROKERTOBANK);
+		loanBrokerAppGateway = new LoanBrokerAppGateway(new BankSerializer(), ConnectionData.ABNTOBROKER, ConnectionData.BROKERTOABN);
 		loanBrokerAppGateway.subscribeToEvent(this);
 
 		setTitle("JMS Bank - ABN AMRO");
