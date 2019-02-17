@@ -1,6 +1,8 @@
 package model;
 
 public class ConnectionData {
+    public static final String AGGREGATOR = "Aggregator";
+
     public static final String CLIENTTOBROKER = "ClientToBroker";
     public static final String BROKERTOCLIENT = "BrokerToClient";
     public static final String BROKERTOING = "BrokerToING";

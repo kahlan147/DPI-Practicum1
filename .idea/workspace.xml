@@ -2,14 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="a4a2296c-b95b-4e31-836b-f0388855e295" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/application forms/abn amro/bank/INGBankFrame.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/application forms/abn amro/bank/RaboBankFrame.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/mix/model/Gateway/BankGatewayManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application forms/abn amro/bank/JMSBankFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/application forms/abn amro/bank/ABNBankFrame.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/application forms/loan broker/loanbroker/LoanBrokerFrame.java" beforeDir="false" afterPath="$PROJECT_DIR$/application forms/loan broker/loanbroker/LoanBrokerFrame.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/mix/model/ConnectionData.java" beforeDir="false" afterPath="$PROJECT_DIR$/mix/model/ConnectionData.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/mix/model/Gateway/BankAppGateway.java" beforeDir="false" afterPath="$PROJECT_DIR$/mix/model/Gateway/BankAppGateway.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mix/model/Gateway/BankGatewayManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/mix/model/Gateway/BankGatewayManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/mix/model/Gateway/LoanBrokerAppGateway.java" beforeDir="false" afterPath="$PROJECT_DIR$/mix/model/Gateway/LoanBrokerAppGateway.java" afterDir="false" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -21,10 +18,10 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/application forms/loan broker/loanbroker/LoanBrokerFrame.java">
+        <entry file="file://$PROJECT_DIR$/mix/model/Gateway/BankGatewayManager.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="210">
-              <caret line="63" column="39" lean-forward="true" selection-start-line="63" selection-start-column="39" selection-end-line="63" selection-end-column="39" />
+            <state relative-caret-position="128">
+              <caret line="70" column="56" lean-forward="true" selection-start-line="70" selection-start-column="56" selection-end-line="70" selection-end-column="56" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -33,14 +30,12 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/mix/model/Gateway/BankGatewayManager.java">
+        <entry file="file://$PROJECT_DIR$/mix/model/Gateway/LoanBrokerAppGateway.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="564">
-              <caret line="52" column="44" lean-forward="true" selection-start-line="52" selection-start-column="44" selection-end-line="52" selection-end-column="44" />
+            <state relative-caret-position="864">
+              <caret line="54" column="9" lean-forward="true" selection-start-line="54" selection-start-column="9" selection-end-line="54" selection-end-column="9" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#1160#1161#0" expanded="true" />
-                <element signature="e#1190#1191#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -50,7 +45,7 @@
         <entry file="file://$PROJECT_DIR$/mix/model/bank/BankInterestReply.java">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="144">
-              <caret line="9" column="56" lean-forward="true" selection-start-line="9" selection-start-column="56" selection-end-line="9" selection-end-column="56" />
+              <caret line="9" column="56" selection-start-line="9" selection-start-column="56" selection-end-line="9" selection-end-column="56" />
             </state>
           </provider>
         </entry>
@@ -58,15 +53,20 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/mix/model/Gateway/BankAppGateway.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-30">
-              <caret line="23" column="57" selection-start-line="23" selection-start-column="57" selection-end-line="23" selection-end-column="57" />
+            <state relative-caret-position="196">
+              <caret line="63" column="59" lean-forward="true" selection-start-line="63" selection-start-column="59" selection-end-line="63" selection-end-column="59" />
               <folding>
                 <element signature="imports" expanded="true" />
-                <element signature="e#1826#1827#0" expanded="true" />
-                <element signature="e#1866#1867#0" expanded="true" />
-                <element signature="e#2024#2025#0" expanded="true" />
-                <element signature="e#2097#2098#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/mix/model/ConnectionData.java">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="64">
+              <caret line="4" column="4" lean-forward="true" selection-start-line="4" selection-start-column="4" selection-end-line="4" selection-end-column="4" />
             </state>
           </provider>
         </entry>
@@ -120,17 +120,17 @@
         <option value="$PROJECT_DIR$/mix/model/Gateway/MessageSenderGateway.java" />
         <option value="$PROJECT_DIR$/mix/model/Gateway/MessageReceiverGateway.java" />
         <option value="$PROJECT_DIR$/application forms/loan client/loanclient/LoanClientFrame.java" />
-        <option value="$PROJECT_DIR$/mix/model/Gateway/LoanBrokerAppGateway.java" />
         <option value="$PROJECT_DIR$/mix/model/Gateway/LoanClientAppGateway.java" />
-        <option value="$PROJECT_DIR$/mix/model/ConnectionData.java" />
         <option value="$PROJECT_DIR$/application forms/abn amro/bank/ABNBankFrame.java" />
         <option value="$PROJECT_DIR$/application forms/abn amro/bank/INGBankFrame.java" />
         <option value="$PROJECT_DIR$/application forms/abn amro/bank/RaboBankFrame.java" />
         <option value="$PROJECT_DIR$/mix/model/Gateway/AppGateway.java" />
         <option value="$PROJECT_DIR$/mix/model/Gateway/BankGateway.java" />
         <option value="$PROJECT_DIR$/application forms/loan broker/loanbroker/LoanBrokerFrame.java" />
-        <option value="$PROJECT_DIR$/mix/model/Gateway/BankAppGateway.java" />
         <option value="$PROJECT_DIR$/mix/model/Gateway/BankGatewayManager.java" />
+        <option value="$PROJECT_DIR$/mix/model/ConnectionData.java" />
+        <option value="$PROJECT_DIR$/mix/model/Gateway/BankAppGateway.java" />
+        <option value="$PROJECT_DIR$/mix/model/Gateway/LoanBrokerAppGateway.java" />
       </list>
     </option>
   </component>
@@ -261,7 +261,7 @@
     <property name="Repository.Attach.Sources" value="false" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1550358044277" />
+    <property name="com.android.tools.idea.instantapp.provision.ProvisionBeforeRunTaskProvider.myTimeStamp" value="1550358058540" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../ApacheActiveMQ/apache-activemq-5.15.8/activemq-all-5.15.8.jar!/" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
@@ -399,9 +399,9 @@
       <list>
         <item itemvalue="Application.LoanClientFrame" />
         <item itemvalue="Application.LoanBrokerFrame" />
-        <item itemvalue="Application.RaboBankFrame" />
         <item itemvalue="Application.ABNBankFrame" />
         <item itemvalue="Application.INGBankFrame" />
+        <item itemvalue="Application.RaboBankFrame" />
       </list>
     </recent_temporary>
   </component>
@@ -427,11 +427,12 @@
       <workItem from="1550129019964" duration="3666000" />
       <workItem from="1550139040996" duration="16259000" />
       <workItem from="1550176557468" duration="597000" />
+      <workItem from="1550432017711" duration="4714000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="93400000" />
+    <option name="totallyTimeSpent" value="98564000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -446,7 +447,7 @@
     <frame x="-7" y="-7" width="1550" height="838" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.17114094" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.17315437" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Designer" order="2" />
       <window_info id="Image Layers" order="3" />
@@ -455,7 +456,7 @@
       <window_info id="Favorites" order="6" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.24929178" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.24929178" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.21671388" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -660,13 +661,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/mix/model/ConnectionData.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="80">
-          <caret line="5" column="59" lean-forward="true" selection-start-line="5" selection-start-column="59" selection-end-line="5" selection-end-column="59" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/application forms/abn amro/bank/ABNBankFrame.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="121">
@@ -677,27 +671,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/mix/model/Gateway/BankGateway.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="96">
-          <caret line="6" column="4" lean-forward="true" selection-start-line="6" selection-start-column="4" selection-end-line="6" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/mix/model/Gateway/BankGateway.java" />
     <entry file="file://$PROJECT_DIR$/application forms/abn amro/bank/RaboBankFrame.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="137">
           <caret line="45" column="5" lean-forward="true" selection-start-line="45" selection-start-column="5" selection-end-line="45" selection-end-column="5" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/mix/model/Gateway/LoanBrokerAppGateway.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="608">
-          <caret line="57" column="19" lean-forward="true" selection-start-line="57" selection-start-column="19" selection-end-line="57" selection-end-column="19" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -708,16 +686,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/application forms/loan broker/loanbroker/LoanBrokerFrame.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="210">
-          <caret line="63" column="39" lean-forward="true" selection-start-line="63" selection-start-column="39" selection-end-line="63" selection-end-column="39" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/mix/model/Gateway/AppGateway.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="192">
@@ -725,35 +693,56 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/mix/model/bank/BankInterestReply.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="144">
+          <caret line="9" column="56" selection-start-line="9" selection-start-column="56" selection-end-line="9" selection-end-column="56" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mix/model/ConnectionData.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="64">
+          <caret line="4" column="4" lean-forward="true" selection-start-line="4" selection-start-column="4" selection-end-line="4" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/mix/model/Gateway/BankAppGateway.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-30">
-          <caret line="23" column="57" selection-start-line="23" selection-start-column="57" selection-end-line="23" selection-end-column="57" />
+        <state relative-caret-position="196">
+          <caret line="63" column="59" lean-forward="true" selection-start-line="63" selection-start-column="59" selection-end-line="63" selection-end-column="59" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1826#1827#0" expanded="true" />
-            <element signature="e#1866#1867#0" expanded="true" />
-            <element signature="e#2024#2025#0" expanded="true" />
-            <element signature="e#2097#2098#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/mix/model/bank/BankInterestReply.java">
+    <entry file="file://$PROJECT_DIR$/application forms/loan broker/loanbroker/LoanBrokerFrame.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="144">
-          <caret line="9" column="56" lean-forward="true" selection-start-line="9" selection-start-column="56" selection-end-line="9" selection-end-column="56" />
+        <state relative-caret-position="210">
+          <caret line="63" column="39" selection-start-line="63" selection-start-column="39" selection-end-line="63" selection-end-column="39" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/mix/model/Gateway/BankGatewayManager.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="564">
-          <caret line="52" column="44" lean-forward="true" selection-start-line="52" selection-start-column="44" selection-end-line="52" selection-end-column="44" />
+        <state relative-caret-position="128">
+          <caret line="70" column="56" lean-forward="true" selection-start-line="70" selection-start-column="56" selection-end-line="70" selection-end-column="56" />
           <folding>
             <element signature="imports" expanded="true" />
-            <element signature="e#1160#1161#0" expanded="true" />
-            <element signature="e#1190#1191#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/mix/model/Gateway/LoanBrokerAppGateway.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="864">
+          <caret line="54" column="9" lean-forward="true" selection-start-line="54" selection-start-column="9" selection-end-line="54" selection-end-column="9" />
+          <folding>
+            <element signature="imports" expanded="true" />
           </folding>
         </state>
       </provider>

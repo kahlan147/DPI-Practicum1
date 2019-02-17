@@ -1,6 +1,7 @@
 package model.Gateway;
 
 import messaging.requestreply.RequestReply;
+import model.ConnectionData;
 import model.Gateway.Serializer.BankSerializer;
 import model.Gateway.Serializer.LoanSerializer;
 import model.Gateway.Serializer.Serializer;
@@ -9,10 +10,7 @@ import model.bank.BankInterestRequest;
 import model.loan.LoanReply;
 import model.loan.LoanRequest;
 
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.MessageListener;
-import javax.jms.TextMessage;
+import javax.jms.*;
 import java.util.HashMap;
 
 /**
@@ -22,6 +20,7 @@ public class LoanBrokerAppGateway extends AppGateway {
 
     private NewDataListener listener;
     private HashMap<String, LoanRequest> requestMap;
+    private HashMap<String, Integer> aggregatorMap;
 
     private void setupMessageListener() {
         MessageListener messageListener;
@@ -47,7 +46,7 @@ public class LoanBrokerAppGateway extends AppGateway {
                     try {
                         String textMessage = ((TextMessage) message).getText();
                         BankInterestRequest bankInterestRequest = (BankInterestRequest)serializer.requestFromString(textMessage);
-                        onBankRequestArrived(bankInterestRequest, message.getJMSCorrelationID());
+                        onBankRequestArrived(bankInterestRequest, message.getJMSCorrelationID(), message.getIntProperty(ConnectionData.AGGREGATOR));
                     } catch (JMSException e) {
                         e.printStackTrace();
                     }
@@ -63,6 +62,7 @@ public class LoanBrokerAppGateway extends AppGateway {
     public LoanBrokerAppGateway(Serializer serializer, String senderString, String receiverString){
         super(serializer,senderString,receiverString);
         requestMap = new HashMap<>();
+        aggregatorMap = new HashMap<>();
         setupMessageListener();
     }
 
@@ -87,8 +87,9 @@ public class LoanBrokerAppGateway extends AppGateway {
         listener.newDataReceived(requestReply, Id);
     }
 
-    public void onBankRequestArrived(BankInterestRequest bankInterestRequest, String Id){
+    public void onBankRequestArrived(BankInterestRequest bankInterestRequest, String Id, int aggregator){
         RequestReply requestReply = new RequestReply(bankInterestRequest, null);
+        aggregatorMap.put(Id, Integer.valueOf(aggregator));
         listener.newDataReceived(requestReply, Id);
     }
 
@@ -97,6 +98,7 @@ public class LoanBrokerAppGateway extends AppGateway {
         String result = serializer.replyToString(bankInterestReply);
         Message msg = sender.createTextMessage(result);
         msg.setJMSCorrelationID(Id);
+        msg.setIntProperty(ConnectionData.AGGREGATOR, aggregatorMap.get(Id));
         sender.send(msg);
         }
         catch (JMSException e) {

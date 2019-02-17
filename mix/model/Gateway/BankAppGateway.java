@@ -1,6 +1,7 @@
 package model.Gateway;
 
 import messaging.requestreply.RequestReply;
+import model.ConnectionData;
 import model.Gateway.Serializer.BankSerializer;
 import model.Gateway.Serializer.Serializer;
 import model.bank.BankInterestReply;
@@ -20,7 +21,7 @@ public class BankAppGateway extends AppGateway{
     public int lowestInterest;
     public int highestInterest;
 
-    private NewDataListener listener;
+    private BankGatewayManager bankGatewayManager;
     private HashMap<String, BankInterestRequest> bankInterestRequestHashMap;
 
     public BankAppGateway(Serializer serializer, String senderString, String receiverString, int lowestInterest, int highestInterest){
@@ -35,7 +36,7 @@ public class BankAppGateway extends AppGateway{
                     BankInterestRequest bankInterestRequest = bankInterestRequestHashMap.get(message.getJMSCorrelationID());
                     String textMessage = ((TextMessage) message).getText();
                     BankInterestReply bankInterestReply = (BankInterestReply) serializer.replyFromString(textMessage);
-                    onBankReplyArrived(bankInterestReply, bankInterestRequest, message.getJMSCorrelationID());
+                    onBankReplyArrived(bankInterestReply, bankInterestRequest, message.getJMSCorrelationID(), message.getIntProperty(ConnectionData.AGGREGATOR));
                 }
                 catch (JMSException e) {
                     e.printStackTrace();
@@ -44,24 +45,25 @@ public class BankAppGateway extends AppGateway{
         });
     }
 
-    public void onBankReplyArrived(BankInterestReply reply, BankInterestRequest request, String Id){
+    public void onBankReplyArrived(BankInterestReply reply, BankInterestRequest request, String id, int aggregator){
         RequestReply requestReply = new RequestReply(request, reply);
-        listener.newDataReceived(requestReply, Id);
+        bankGatewayManager.newDataReceived(requestReply, id, aggregator);
     }
 
-    public void subscribeToEvent(NewDataListener listener){
-        this.listener = listener;
+    public void setBankGatewayManager(BankGatewayManager bankGatewayManager){
+        this.bankGatewayManager = bankGatewayManager;
     }
 
     public boolean isInterestedInRequest(int loan){
         return(loan >= lowestInterest && loan <= highestInterest);
     }
 
-    public void sendBankRequest(BankInterestRequest request, String Id){
+    public void sendBankRequest(BankInterestRequest request, String Id, int Aggregator){
         try {
             String result = serializer.requestToString(request);
             Message msg = sender.createTextMessage(result);
             msg.setJMSCorrelationID(Id);
+            msg.setIntProperty(ConnectionData.AGGREGATOR, Aggregator);
             sender.send(msg);
             bankInterestRequestHashMap.put(Id,request);
         }
