@@ -2,16 +2,18 @@ package model.Gateway;
 
 import messaging.requestreply.RequestReply;
 import model.ConnectionData;
-import model.Gateway.Serializer.BankSerializer;
 import model.Gateway.Serializer.Serializer;
 import model.bank.BankInterestReply;
 import model.bank.BankInterestRequest;
+import net.sourceforge.jeval.EvaluationException;
+import net.sourceforge.jeval.Evaluator;
 
 import javax.jms.JMSException;
 import javax.jms.Message;
 import javax.jms.MessageListener;
 import javax.jms.TextMessage;
 import java.util.HashMap;
+
 
 /**
  * Created by Niels Verheijen on 13/02/2019.
@@ -57,7 +59,18 @@ public class BankAppGateway extends AppGateway{
     }
 
     public boolean isInterestedInRequest(int loan, int loanTime){
-        return(loan >= lowestInterest && loan <= highestInterest && loanTime <= maxLoanTime);
+        try {
+            String checkString = "#{amount} >= " + lowestInterest + " && #{amount} <= " + highestInterest + " && #{time} <= " + maxLoanTime;
+            Evaluator evaluator = new Evaluator();
+            evaluator.putVariable("amount", Integer.toString(loan));
+            evaluator.putVariable("time", Integer.toString(loanTime));
+            return evaluator.evaluate(checkString).equals("1.0");
+        }
+        catch (EvaluationException e) {
+            e.printStackTrace();
+        }
+        return false;
+        //return(loan >= lowestInterest && loan <= highestInterest && loanTime <= maxLoanTime);
     }
 
     public void sendBankRequest(BankInterestRequest request, String Id, int Aggregator){
