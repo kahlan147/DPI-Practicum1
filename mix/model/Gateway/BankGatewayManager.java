@@ -27,13 +27,13 @@ public class BankGatewayManager{
     public BankGatewayManager(){
         banks = new ArrayList<>();
         bankOfferMap = new HashMap<>();
-        BankAppGateway INGBank = new BankAppGateway(new BankSerializer(), ConnectionData.BROKERTOING, ConnectionData.INGTOBROKER, 0, 100000);
+        BankAppGateway INGBank = new BankAppGateway(new BankSerializer(), ConnectionData.BROKERTOING, ConnectionData.INGTOBROKER, 0, 100000, 10);
         INGBank.setBankGatewayManager(this);
         banks.add(INGBank);
-        BankAppGateway RaboBank = new BankAppGateway(new BankSerializer(), ConnectionData.BROKERTORABO, ConnectionData.RABOTOBROKER, 0, 250000);
+        BankAppGateway RaboBank = new BankAppGateway(new BankSerializer(), ConnectionData.BROKERTORABO, ConnectionData.RABOTOBROKER, 0, 250000, 15);
         RaboBank.setBankGatewayManager(this);
         banks.add(RaboBank);
-        BankAppGateway ABNAMROBank = new BankAppGateway(new BankSerializer(), ConnectionData.BROKERTOABN, ConnectionData.ABNTOBROKER, 200000, 300000);
+        BankAppGateway ABNAMROBank = new BankAppGateway(new BankSerializer(), ConnectionData.BROKERTOABN, ConnectionData.ABNTOBROKER, 200000, 300000, 20);
         ABNAMROBank.setBankGatewayManager(this);
         banks.add(ABNAMROBank);
     }
@@ -43,11 +43,10 @@ public class BankGatewayManager{
     }
 
     public void sendMessage(BankInterestRequest bankInterestRequest, String Id){
-        System.out.println("1");
         int aggregator = -1;
         List<BankOffer> interestedInOffer = new ArrayList<>();
         for(BankAppGateway bankAppGateway : banks){
-            if(bankAppGateway.isInterestedInRequest(bankInterestRequest.getAmount())){
+            if(bankAppGateway.isInterestedInRequest(bankInterestRequest.getAmount(), bankInterestRequest.getTime())){
                 aggregator++;
                 bankAppGateway.sendBankRequest(bankInterestRequest, Id, aggregator);
                 interestedInOffer.add(new BankOffer());
@@ -82,6 +81,4 @@ public class BankGatewayManager{
         }
         listener.newDataReceived(currentBestInterest.requestReply, Id);
     }
-
-
 }

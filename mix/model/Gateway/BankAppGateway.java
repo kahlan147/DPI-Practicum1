@@ -18,16 +18,18 @@ import java.util.HashMap;
  */
 public class BankAppGateway extends AppGateway{
 
-    public int lowestInterest;
-    public int highestInterest;
+    private int lowestInterest;
+    private int highestInterest;
+    private int maxLoanTime;
 
     private BankGatewayManager bankGatewayManager;
     private HashMap<String, BankInterestRequest> bankInterestRequestHashMap;
 
-    public BankAppGateway(Serializer serializer, String senderString, String receiverString, int lowestInterest, int highestInterest){
+    public BankAppGateway(Serializer serializer, String senderString, String receiverString, int lowestInterest, int highestInterest, int maxLoanTime){
         super(serializer,senderString,receiverString);
         this.lowestInterest = lowestInterest;
         this.highestInterest = highestInterest;
+        this.maxLoanTime = maxLoanTime;
         bankInterestRequestHashMap = new HashMap<>();
         receiver.setListener(new MessageListener() {
             @Override
@@ -54,8 +56,8 @@ public class BankAppGateway extends AppGateway{
         this.bankGatewayManager = bankGatewayManager;
     }
 
-    public boolean isInterestedInRequest(int loan){
-        return(loan >= lowestInterest && loan <= highestInterest);
+    public boolean isInterestedInRequest(int loan, int loanTime){
+        return(loan >= lowestInterest && loan <= highestInterest && loanTime <= maxLoanTime);
     }
 
     public void sendBankRequest(BankInterestRequest request, String Id, int Aggregator){
